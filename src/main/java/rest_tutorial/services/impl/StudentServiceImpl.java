@@ -2,6 +2,7 @@ package rest_tutorial.services.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rest_tutorial.exceptions.BadRequestException;
 import rest_tutorial.exceptions.NotFoundException;
@@ -26,12 +27,16 @@ import static org.springframework.http.HttpStatus.*;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Response register(Student student) {
         String email = student.getEmail();
 
         checkEmail(email);
+
+        String password = student.getPassword();
+        student.setPassword(passwordEncoder.encode(password));
 
         Student savedStudent
                 = studentRepository.save(student);
